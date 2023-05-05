@@ -6,6 +6,8 @@ const Table = ({ data, showHeader, showFooter, tableHead }) => {
     const [sortOrder, setSortOrder] = useState({ column: '', ascending: true });
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredData, setFilteredData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
     useEffect(() => {
         if (sortedData.length > 0) {
@@ -22,10 +24,11 @@ const Table = ({ data, showHeader, showFooter, tableHead }) => {
                 )
             )
         );
-        setFilteredData(filteredDataCopy);
-    }, [searchQuery, sortedData]);
-
-
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const currentData = filteredDataCopy.slice(start, end);
+        setFilteredData(currentData);
+    }, [searchQuery, sortedData, currentPage, rowsPerPage]);
 
     const Header = () => {
         const searchInputRef = useRef(null);
@@ -39,11 +42,11 @@ const Table = ({ data, showHeader, showFooter, tableHead }) => {
                 <header>
                     <span>
                         Show
-                        <select>
-                            <option>10</option>
-                            <option>25</option>
-                            <option>50</option>
-                            <option>100</option>
+                        <select value={rowsPerPage} onChange={(e) => setRowsPerPage(Number(e.target.value))}>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
                         </select>
                         entries
                     </span>
@@ -55,15 +58,31 @@ const Table = ({ data, showHeader, showFooter, tableHead }) => {
         }
     };
 
-
     const Footer = () => {
         if (showFooter) {
+            const totalPages = Math.ceil(data.length / rowsPerPage);
+            const pageButtons = [];
+            for (let i = 1; i <= totalPages; i++) {
+                pageButtons.push(
+                    <button key={i} onClick={() => setCurrentPage(i)} className={i === currentPage ? 'active' : ''}>
+                        {i}
+                    </button>
+                );
+            }
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
             return (
                 <footer>
-                    <span>Showing</span>
+                    <span>Showing {start + 1} to {end > data.length ? data.length : end} of {data.length} entries</span>
                     <div>
-                        <button>Previous</button>
-                        <button>Next</button>
+                        <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
+                            Previous
+                        </button>
+                        {pageButtons}
+                        <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
+                            Next
+                        </button>
                     </div>
                 </footer>
             );
@@ -88,7 +107,7 @@ const Table = ({ data, showHeader, showFooter, tableHead }) => {
                 <thead>
                     <tr>
                         {tableHead.map((column, index) => (
-                            <th onClick={() => {if(sortedData[0]){handleSort(index)}}} key={index}>
+                            <th onClick={() => { if (sortedData[0]) { handleSort(index) } }} key={index}>
                                 {column}
 
                                 {sortedData[0] && sortOrder.column === Object.keys(sortedData[0])[index] && (
