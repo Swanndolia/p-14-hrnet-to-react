@@ -43,10 +43,10 @@ const Home = () => {
                     <input type="text" id="last-name" />
 
                     <label htmlFor="date-of-birth">Date of Birth</label>
-                    <input id="date-of-birth" type="text" />
+                    <input id="date-of-birth" type="date" />
 
                     <label htmlFor="start-date">Start Date</label>
-                    <input id="start-date" type="text" />
+                    <input id="start-date" type="date" />
 
                     <fieldset className="address">
                         <legend>Address</legend>

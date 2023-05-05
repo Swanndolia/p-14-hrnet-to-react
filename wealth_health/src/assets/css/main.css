@@ -155,3 +155,15 @@ header>span {
 header>span>.dropdown {
   width: 50px;
 }
+
+footer{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 60%;
+  padding: 10px;
+}
+footer > div{
+  display: flex;
+  gap: 30px;
+}
