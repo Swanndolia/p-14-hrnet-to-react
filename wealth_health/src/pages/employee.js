@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import Table from '../components/table'
+import {Table} from '@swanndolia/react-datatable'
+import React from "react";
 const Employee = () => {
     const employees = useSelector((state) => state.users.list);
     const tableHead = ["First Name", "Last Name", "Start Date", "Date of Birth", "Department", "Street", "City", "State", "Zip Code"]
